@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Questions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #E0E7FF;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #8c89b8;
+      padding: 15px;
+      color: white;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #000c0c;
+    }
+    input[type="text"], select, input[type="file"], input[type="url"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #8c89b8;
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Upload Question Details
+</header>
+
+<div class="container">
+  <form>
+    <!-- Topic -->
+    <label for="topic">Topic</label>
+    <input type="text" id="topic" name="topic" placeholder="Enter topic..." required>
+
+    <!-- Difficulty -->
+    <label for="difficulty">Difficulty Level</label>
+    <select id="difficulty" name="difficulty" required>
+      <option value="">-- Select Difficulty --</option>
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+
+    <!-- Question Type -->
+    <label for="qtype">Question Type</label>
+    <select id="qtype" name="qtype" required>
+      <option value="">-- Select Question Type --</option>
+      <option value="mcq">Multiple Choice</option>
+      <option value="fillintheblank">Fill in the blanks</option>
+      <option value="short">Short Answer</option>
+    </select>
+
+    <!-- Content Upload -->
+    <label for="content">Upload Content (PDF/Text/URL)</label>
+    <textarea id="contentText" name="contentText" placeholder="Type content here..."></textarea>
+    <input type="file" id="content" name="content" accept=".pdf,.txt">
+    <input type="url" id="url" name="url" placeholder="Or enter a URL">
+
+    <!-- Submit -->
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Manage - AI Smart Quizzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #E0E7FF; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #91a2d8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4857a2; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border: none; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: modalSlideIn 0.3s ease-out; }
+        @keyframes modalSlideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; transition: color 0.3s; }
+        .close:hover { color: #e74c3c; }
+        .stats-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: all 0.3s ease; }
+        .stats-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .user-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+<aside class="w-64 flex-shrink-0 bg-white shadow-lg flex flex-col transition-all duration-300">
+    <div class="flex items-center justify-center h-20 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-800">AI Smart Quizzer</h1>
+    </div>
+    <nav class="flex-grow px-4 py-6">
+        <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <i class="fas fa-tachometer-alt w-6 h-6 mr-3"></i>
+            <span class="font-semibold">Dashboard</span>
+        </a>
+        <a href="{% url 'admin_manage' %}" class="mt-3 flex items-center px-4 py-3 text-white bg-indigo-500 rounded-lg transition-transform transform hover:scale-105">
+            <i class="fas fa-cogs w-6 h-6 mr-3"></i>
+            <span class="font-semibold">Manage Quizzes</span>
+        </a>
+        <a href="{% url 'admin_users' %}" class="mt-3 flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <i class="fas fa-users w-6 h-6 mr-3"></i>
+            <span class="font-semibold">Users</span>
+        </a>
+        <a href="#" class="mt-3 flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <i class="fas fa-cog w-6 h-6 mr-3"></i>
+            <span class="font-semibold">Settings</span>
+        </a>
+    </nav>
+    <div class="px-4 py-6 border-t border-gray-200">
+        <a href="{% url 'logout' %}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
+            <i class="fas fa-sign-out-alt w-6 h-6 mr-3"></i>
+            <span class="font-semibold">Logout</span>
+        </a>
+    </div>
+</aside>
+
+<main class="flex-1 p-8 overflow-y-auto">
+    <header class="mb-8">
+        <h2 class="text-4xl font-bold text-gray-800">Admin Management</h2>
+        <p class="text-gray-500 mt-2">Manage quizzes and view system statistics.</p>
+    </header>
+
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+        <div class="p-4 mb-2 rounded-lg
+            {% if message.tags == 'success' %} bg-green-100 text-green-800 
+            {% elif message.tags == 'error' %} bg-red-100 text-red-800 
+            {% else %} bg-gray-100 text-gray-800 {% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="stats-card p-6 rounded-2xl shadow-lg text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold opacity-90">Total Quizzes</h3>
+                    <p class="text-3xl font-bold mt-2">{{ total_quizzes }}</p>
+                </div>
+                <i class="fas fa-question-circle text-4xl opacity-70"></i>
+            </div>
+        </div>
+        <div class="stats-card p-6 rounded-2xl shadow-lg text-white cursor-pointer" onclick="openTopicsModal()">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold opacity-90">Topics</h3>
+                    <p class="text-3xl font-bold mt-2">{{ total_topics }}</p>
+                </div>
+                <i class="fas fa-book text-4xl opacity-70"></i>
+            </div>
+        </div>
+        <div class="stats-card p-6 rounded-2xl shadow-lg text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold opacity-90">Users</h3>
+                    <p class="text-3xl font-bold mt-2">{{ total_users }}</p>
+                </div>
+                <i class="fas fa-users text-4xl opacity-70"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-xl mt-8">
+        <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
+            <i class="fas fa-clock mr-3 text-green-500"></i>
+            Recent Quiz Activity
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topic</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for result in recent_results %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ result.user.first_name }} {{ result.user.last_name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ result.topic }} - {{ result.subtopic }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+                                {% if result.score >= 80 %}bg-green-100 text-green-800
+                                {% elif result.score >= 60 %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ result.score|floatformat:1 }}%
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ result.date_attempted|date:"M d, Y H:i" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">No recent activity</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="max-w-xl mx-auto mt-10">
+        <div class="bg-white p-6 rounded-2xl shadow-xl">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-6 flex items-center">
+                <i class="fas fa-trash-alt mr-3 text-red-500"></i>
+                Delete Quiz Content
+            </h3>
+            <form method="POST" class="space-y-4" onsubmit="return confirmDelete()">
+                {% csrf_token %}
+                <input type="hidden" name="delete_quizzes" value="1">
+                <div>
+                    <label for="delete_topic" class="block text-sm font-medium text-gray-600 mb-1">Topic</label>
+                    <select id="delete_topic" name="delete_topic" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none">
+                        <option value="">-- All Topics --</option>
+                        {% for topic in topics %}<option value="{{ topic.id }}">{{ topic.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="delete_subtopic" class="block text-sm font-medium text-gray-600 mb-1">Subtopic</label>
+                    <select id="delete_subtopic" name="delete_subtopic" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400">
+                        <option value="">-- All Subtopics --</option>
+                        {% for subtopic in subtopics %}<option value="{{ subtopic.id }}">{{ subtopic.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="delete_difficulty" class="block text-sm font-medium text-gray-600 mb-1">Difficulty</label>
+                    <select id="delete_difficulty" name="delete_difficulty" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400">
+                        <option value="">-- All Difficulties --</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300">
+                        <i class="fas fa-trash-alt mr-2"></i>
+                        Delete Selected Quizzes
+                    </button>
+                </div>
+            </form>
+            <div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400">
+                <p class="text-sm text-yellow-700">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Warning: This action cannot be undone. Please be careful.
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUserModal()">&times;</span>
+        <div class="text-center mb-6">
+            <i class="fas fa-user-circle text-6xl text-indigo-500 mb-4"></i>
+            <h2 id="modalUserName" class="text-2xl font-bold text-gray-800 mb-2"></h2>
+        </div>
+        <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="font-semibold text-gray-600">Email:</span>
+                <span id="modalUserEmail" class="text-gray-800"></span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="font-semibold text-gray-600">Contact:</span>
+                <span id="modalUserContact" class="text-gray-800"></span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="font-semibold text-gray-600">Gender:</span>
+                <span id="modalUserGender" class="text-gray-800"></span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="font-semibold text-gray-600">Joined:</span>
+                <span id="modalUserJoined" class="text-gray-800"></span>
+            </div>
+        </div>
+        <div class="mt-6 text-center">
+            <button onclick="closeUserModal()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="topicsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeTopicsModal()">&times;</span>
+        <div class="text-center mb-6">
+            <i class="fas fa-book-open text-6xl text-indigo-500 mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Topics and Subtopics</h2>
+        </div>
+        <div id="topics-accordion" class="space-y-2 max-h-80 overflow-y-auto px-2">
+            {% for topic in topics %}
+                <div class="border rounded-lg overflow-hidden">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-semibold text-lg text-gray-700 focus:outline-none hover:bg-gray-50 transition-colors">
+                        <span>{{ topic.name }}</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                    </button>
+                    <div class="hidden bg-gray-50 border-t p-4">
+                        <ul class="list-disc list-inside space-y-2 pl-4 text-gray-600">
+                            {% for subtopic in topic.subtopic_set.all %}
+                                <li>{{ subtopic.name }}</li>
+                            {% empty %}
+                                <li class="list-none text-gray-500 italic">No subtopics found for this topic.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-lg text-gray-500 text-center">No topics found.</p>
+            {% endfor %}
+        </div>
+        <div class="mt-6 text-center">
+            <button onclick="closeTopicsModal()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#topics-accordion button').forEach(button => {
+        button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            
+            if (content.classList.contains('hidden')) {
+                icon.classList.remove('rotate-180');
+            } else {
+                icon.classList.add('rotate-180');
+            }
+        });
+    });
+});
+
+function openUserModal(el) { /* Functionality is removed from this page, but we keep the function to prevent errors */ }
+function closeUserModal() { document.getElementById('userModal').style.display = 'none'; }
+function openTopicsModal() { document.getElementById('topicsModal').style.display = 'block'; }
+function closeTopicsModal() { document.getElementById('topicsModal').style.display = 'none'; }
+function confirmDelete() { return confirm('Are you sure you want to delete the selected quiz content? This action cannot be undone.'); }
+
+window.onclick = function(event) {
+    const userModal = document.getElementById('userModal');
+    const topicsModal = document.getElementById('topicsModal');
+    if (event.target == userModal) { userModal.style.display = 'none'; }
+    if (event.target == topicsModal) { topicsModal.style.display = 'none'; }
+}
+
+document.getElementById('delete_topic').addEventListener('change', function() {
+    const topicId = this.value;
+    const subtopicSelect = document.getElementById('delete_subtopic');
+    subtopicSelect.innerHTML = '<option value="">-- All Subtopics --</option>'
+    if (topicId) {
+                fetch(`/ajax/get-subtopics/?topic_id=${topicId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(function(subtopic) {
+                            const option = document.createElement('option');
+                            option.value = subtopic.id;
+                            option.textContent = subtopic.name;
+                            subtopicSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching subtopics:', error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

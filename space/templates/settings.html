@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Settings - AI Smart Quizzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-indigo-100 flex items-center justify-center min-h-screen font-inter">
+
+  <div class="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Account Settings</h2>
+
+    <!-- Django messages (success/error) -->
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="p-3 mb-2 text-sm rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'settings' %}" class="space-y-5">
+      {% csrf_token %}
+
+      <!-- First Name -->
+      <div>
+        <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+        <input type="text" id="first_name" name="first_name" value="{{ request.user.first_name }}" 
+          class="w-full mt-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Last Name -->
+      <div>
+        <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+        <input type="text" id="last_name" name="last_name" value="{{ request.user.last_name }}" 
+          class="w-full mt-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="email" name="email" value="{{ request.user.email }}" 
+          class="w-full mt-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <label for="contact" class="block text-sm font-medium text-gray-700">Contact Number</label>
+        <input type="text" id="contact" name="contact" value="{{ request.user.profile.contact_no }}" 
+          class="w-full mt-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <!-- Gender -->
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+        <select id="gender" name="gender" 
+          class="w-full mt-1 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="M" {% if request.user.profile.gender == "M" %}selected{% endif %}>Male</option>
+          <option value="F" {% if request.user.profile.gender == "F" %}selected{% endif %}>Female</option>
+          <option value="O" {% if request.user.profile.gender == "O" %}selected{% endif %}>Other</option>
+        </select>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" 
+        class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
+        Save Changes
+      </button>
+    </form>
+
+</body>
+</html>

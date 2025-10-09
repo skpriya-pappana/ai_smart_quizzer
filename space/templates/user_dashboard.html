@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard - AI Smart Quizzer</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #e0e7ff;
+        color: #333;
+        overflow-x: hidden;
+      }
+      .dashboard-container { display: flex; min-height: 100vh; }
+      .sidebar {
+        width: 250px;
+        background-color: #fff;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #eee;
+        position: fixed;
+        height: 100%;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+      }
+      .sidebar.closed { transform: translateX(-250px); }
+      .sidebar-title { font-size: 1.5em; font-weight: bold; margin-bottom: 30px; color: #333; }
+      .sidebar-menu { flex-grow: 1; }
+      .sidebar-menu ul { list-style: none; padding: 0; }
+      .sidebar-menu li { margin-bottom: 10px; }
+      .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        text-decoration: none;
+        color: #333;
+        border-radius: 8px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+      .sidebar-menu a:hover, .sidebar-menu a.active { background-color: #eee; color: #4a90e2; }
+      .sidebar-menu .material-icons { margin-right: 10px; font-size: 24px; }
+      .logout-btn-container { margin-top: auto; padding-top: 20px; }
+      .logout-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        background-color: #000;
+        color: #fff;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .logout-btn:hover { background-color: #0f0f0f; }
+      .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        margin-left: 250px;
+        transition: margin-left 0.3s ease;
+      }
+      .main-content.sidebar-closed { margin-left: 0; }
+      .top-navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        margin-bottom: 20px;
+      }
+      .top-left-group { display: flex; align-items: center; gap: 10px; }
+      .app-title { font-size: 28px; font-weight: bold; color: #333; }
+      .menu-toggle-btn {
+        background: none; border: none; cursor: pointer; color: #333; font-size: 28px;
+        display: flex; align-items: center;
+      }
+      .user-dropdown { position: relative; cursor: pointer; }
+      .user-name { font-weight: bold; padding: 8px 12px; }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #fff;
+        min-width: 120px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        border-radius: 8px;
+        margin-top: 5px;
+      }
+      .user-dropdown:hover .dropdown-content { display: block; }
+      .dropdown-content a {
+        color: #333; padding: 12px 16px; text-decoration: none; display: block;
+      }
+      .dropdown-content a:hover { background-color: #eee; }
+      .quiz-card {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .card-title {
+        font-size: 1.8em;
+        font-weight: 500;
+        margin-bottom: 30px;
+        text-align: center;
+        color: #555;
+      }
+      .form-group { margin-bottom: 25px; }
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #555;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1em;
+      }
+      .start-quiz-btn {
+        width: 100%;
+        padding: 15px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .start-quiz-btn:hover { background-color: #222; }
+      .suggestion-box {
+        background:#f0f4ff; padding:1rem; border-radius:10px; margin-bottom:1rem; color:#4857a2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-title">User Dashboard</div>
+        <nav class="sidebar-menu">
+          <ul>
+            <li><a href="#" class="active"><span class="material-icons">dashboard</span> Dashboard</a></li>
+            <li><a href="/my_stats"><span class="material-icons">bar_chart</span> My Stats</a></li>
+            <li><a href="/history"><span class="material-icons">history</span> History</a></li>
+            <li><a href="/settings"><span class="material-icons">settings</span> Settings</a></li>
+            <li><a href="/help_support"><span class="material-icons">help_center</span> Help & Support</a></li>
+          </ul>
+        </nav>
+        <div class="logout-btn-container">
+          <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="main-content">
+        <header class="top-navbar">
+          <div class="top-left-group">
+            <button class="menu-toggle-btn" id="menu-toggle">
+              <span class="material-icons">menu</span>
+            </button>
+            <div class="app-title">AI Smart Quizzer</div>
+          </div>
+          <div class="user-dropdown">
+            <span class="user-name">👤 {{ request.user.first_name }} {{ request.user.last_name }} ▼</span>
+            <div class="dropdown-content">
+              <a href="{% url 'settings' %}">Settings</a>
+              <a href="{% url 'logout' %}">Logout</a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Quiz Card -->
+        <section class="quiz-card">
+          <h2 class="card-title">Hello, {{ request.user.first_name }}! Ready to take the quiz?</h2>
+
+          <!-- Suggestions Messages -->
+          {% if messages %}
+          <div class="suggestion-box">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- Quiz Form -->
+          <form method="POST" action="{% url 'start_quiz' %}" class="quiz-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="topic">Topic</label>
+              <select id="topic" name="topic" required>
+                <option value="">-- Select Topic --</option>
+                {% for topic in topics %}
+                  <option value="{{ topic.id }}">{{ topic.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="subtopic">Subtopic</label>
+              <select id="subtopic" name="subtopic">
+                <option value="">-- Select a Topic First --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="difficulty">Difficulty</label>
+              <select id="difficulty" name="difficulty" required>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="num_questions">Number of Questions</label>
+              <select id="num_questions" name="num_questions" required>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+              </select>
+            </div>
+
+            <button type="submit" class="start-quiz-btn">Start Quiz</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.getElementById("menu-toggle");
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.getElementById("main-content");
+
+        menuToggle.addEventListener("click", function () {
+          sidebar.classList.toggle("closed");
+          mainContent.classList.toggle("sidebar-closed");
+        });
+
+        // Dynamic Subtopic Loading
+        const topicSelect = document.getElementById("topic");
+        const subtopicSelect = document.getElementById("subtopic");
+
+        topicSelect.addEventListener("change", function () {
+          const topicId = this.value;
+          subtopicSelect.innerHTML = '<option value="">-- Loading... --</option>';
+
+          if (topicId) {
+            fetch(`/ajax/get-subtopics/?topic_id=${topicId}`)
+              .then((response) => response.json())
+              .then((data) => {
+                let options = '<option value="">-- Select Subtopic --</option>';
+                data.forEach((sub) => {
+                  options += `<option value="${sub.id}">${sub.name}</option>`;
+                });
+                subtopicSelect.innerHTML = options;
+              });
+          } else {
+            subtopicSelect.innerHTML = '<option value="">-- Select a Topic First --</option>';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

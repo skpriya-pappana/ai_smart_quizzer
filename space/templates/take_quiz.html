@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz in Progress</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            max-width: 800px;
+            width: 95%;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        }
+        .quiz-header {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .progress-text {
+            font-weight: bold;
+            color: #555;
+        }
+        .question p {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        .options-form label {
+            display: block;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .options-form label:hover {
+            background-color: #f0f0f0;
+        }
+        .options-form input[type="radio"] {
+            margin-right: 10px;
+        }
+        .navigation-btns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+        }
+        .prev-btn {
+            background: #6c757d;
+        }
+        .prev-btn:hover {
+            background: #5a6268;
+        }
+        .next-btn {
+            background: #000;
+        }
+        .next-btn:hover {
+            background: #333;
+        }
+        .submit-btn {
+            background: #28a745;
+        }
+        .submit-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h2>Quiz in Progress</h2>
+        <p class="progress-text">Question {{ question_number }} of {{ total_questions }}</p>
+    </div>
+    
+    <div class="question">
+        <p>{{ question.question }}</p>
+    </div>
+
+    <form class="options-form" method="POST">
+        {% csrf_token %}
+
+        <label>
+            <input type="radio" name="q{{ question.id }}" value="A" {% if previous_answer == 'A' %}checked{% endif %}> 
+            A) {{ question.option1 }}
+        </label>
+        <label>
+            <input type="radio" name="q{{ question.id }}" value="B" {% if previous_answer == 'B' %}checked{% endif %}> 
+            B) {{ question.option2 }}
+        </label>
+        <label>
+            <input type="radio" name="q{{ question.id }}" value="C" {% if previous_answer == 'C' %}checked{% endif %}> 
+            C) {{ question.option3 }}
+        </label>
+        <label>
+            <input type="radio" name="q{{ question.id }}" value="D" {% if previous_answer == 'D' %}checked{% endif %}> 
+            D) {{ question.option4 }}
+        </label>
+
+        <div class="navigation-btns">
+            <!-- Show Previous Button if not the first question -->
+            {% if question_number > 1 %}
+                <button type="submit" name="previous" class="nav-btn prev-btn">Previous</button>
+            {% else %}
+                <!-- Empty div to keep 'Next' button on the right -->
+                <div></div>
+            {% endif %}
+
+            <!-- Show Submit Button if it's the last question -->
+            {% if question_number == total_questions %}
+                <button type="submit" name="next" class="nav-btn submit-btn">Submit Quiz</button>
+            {% else %}
+                <button type="submit" name="next" class="nav-btn next-btn">Next</button>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

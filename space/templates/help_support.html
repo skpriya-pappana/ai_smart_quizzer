@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Support</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #E0E7FF;
+    }
+
+    .support-container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 95%;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    .support-header {
+      color: #4857a2;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 1rem;
+    }
+
+    .faq-section {
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .faq-item {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #f9f9f9;
+      transition: background 0.3s;
+    }
+
+    .faq-item:hover {
+      background: #f1f1f1;
+    }
+
+    .faq-item h3 {
+      margin: 0;
+      color: #4857a2;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .faq-item p {
+      margin: 0.5rem 0 0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .contact-section {
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .contact-section h2 {
+      color: #4857a2;
+      margin-bottom: 0.8rem;
+    }
+
+    .contact-section p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      text-decoration: none;
+      background: #4857a2;
+      color: #fff;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .back-link:hover {
+      background: #3043a2;
+    }
+  </style>
+</head>
+<body>
+  <div class="support-container">
+    <div class="support-header">
+      <h1><i class="fas fa-life-ring"></i> Help & Support</h1>
+    </div>
+
+    <!-- FAQs -->
+    <div class="faq-section">
+      <div class="faq-item">
+        <h3><i class="fas fa-question-circle"></i> How do I reset my password?</h3>
+        <p>Click on "Forgot password" at the login page and follow the instructions to reset it.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3><i class="fas fa-question-circle"></i> How can I track my quiz performance?</h3>
+        <p>Go to <b>My Stats</b> from your dashboard to see your quiz history and progress.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3><i class="fas fa-question-circle"></i> Who do I contact for technical issues?</h3>
+        <p>You can reach out to our support team using the contact details below.</p>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-section">
+      <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+      <p>Email: <a href="mailto:support@example.com">skppappana@gmail.com</a></p>
+      <p>Phone: +91 9876543210</p>
+      <p>Working Hours: Mon - Fri (9 AM - 6 PM)</p>
+    </div>
+
+    <a href="{% url 'user_dashboard' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+</body>
+</html>
