@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Suggestion</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+
+  .modal h2 {
+    margin-top: 0;
+    color: #4857a2;
+  }
+
+  .modal p {
+    font-size: 1rem;
+    margin: 1rem 0 2rem;
+  }
+
+  .button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .button-container button,
+  .button-container a {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .btn-proceed {
+    background: #4857a2;
+    color: #fff;
+  }
+
+  .btn-proceed:hover {
+    background: #3043a2;
+  }
+
+  .btn-suggested {
+    background: #28a745;
+    color: #fff;
+  }
+
+  .btn-suggested:hover {
+    background: #218838;
+  }
+
+  .btn-back {
+    background: #ddd;
+    color: #444;
+  }
+
+  .btn-back:hover {
+    background: #bbb;
+  }
+
+  @media (max-width: 400px) {
+    .button-container {
+      flex-direction: column;
+    }
+    .button-container button,
+    .button-container a {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="modal">
+  <h2><i class="fas fa-lightbulb"></i> Quiz Suggestion</h2>
+  <p>{{ suggestion }}</p>
+
+  <div class="button-container">
+    <form method="post" action="{% url 'start_quiz' %}" style="margin:0;">
+      {% csrf_token %}
+      <input type="hidden" name="topic" value="{{ topic_id }}">
+      <input type="hidden" name="subtopic" value="{{ subtopic_id }}">
+      <input type="hidden" name="difficulty" value="{{ difficulty }}">
+      <input type="hidden" name="num_questions" value="{{ num_questions }}">
+      <input type="hidden" name="proceed" value="true">
+      <button type="submit" class="btn-proceed">Proceed Anyway and Take This Quiz</button>
+    </form>
+
+  
+
+    <!-- Suggested Quiz or Next Topic -->
+    {% if "next topic" in suggestion %}
+      <!-- If suggestion says move to next topic -->
+      <a href="{% url 'user_dashboard' %}" class="btn-back">Back to Dashboard</a>
+    {% else %}
+      <!-- If suggestion says to try higher difficulty -->
+      <form method="post" action="{% url 'start_quiz' %}" style="margin:0;">
+        {% csrf_token %}
+        <input type="hidden" name="topic" value="{{ topic_id }}">
+        <input type="hidden" name="subtopic" value="{{ subtopic_id }}">
+
+        {% if "Medium" in suggestion %}
+          <input type="hidden" name="difficulty" value="medium">
+        {% elif "Hard" in suggestion %}
+          <input type="hidden" name="difficulty" value="hard">
+        {% else %}
+          <input type="hidden" name="difficulty" value="easy">
+        {% endif %}
+
+        <input type="hidden" name="num_questions" value="{{ num_questions }}">
+        <button type="submit" class="btn-suggested">Take Suggested Quiz Instead</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+
+</body>
+</html>

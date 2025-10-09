@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-SmartQuizzer App - Home</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #e0e7ff;
+        color: #333;
+        /* Removed overflow hidden so sections can scroll */
+      }
+
+      @keyframes textFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes buttonHover {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes bounceArrow {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .animated-text {
+        animation: textFadeIn 1s ease-out forwards;
+        opacity: 0;
+      }
+
+      .btn-animation:hover {
+        animation: buttonHover 0.3s forwards;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .arrow-container {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        cursor: pointer;
+        animation: bounceArrow 1.5s infinite ease-in-out;
+        z-index: 20;
+      }
+
+      .arrow {
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 15px solid #667eea;
+        transform: rotate(180deg);
+        display: block;
+      }
+
+      .arrow-container:hover .arrow {
+        filter: brightness(1.2);
+      }
+
+      nav {
+        background-color: #a5b4fc;
+      }
+      .font-noto {
+        font-family: "Noto Serif", serif;
+      }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav
+      class="p-10 shadow-md flex justify-between items-center fixed w-full h-24 top-0 z-10"
+    >
+      <div class="flex items-center space-x-2">
+        <h3 class="text-2xl font-bold rounded-md">Ai Smart Quizzer</h3>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex">
+          <ul class="flex gap-8 text-lg mr-16 cursor-pointer">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="admin_login">Upload content</a></li>
+            <li><a href="#about">About</a></li>
+          </ul>
+        </div>
+        <div class="space-x-4">
+          <button
+            class="btn-animation bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out"
+          >
+            <a href="/register">Signup</a>
+          </button>
+          <button
+            class="btn-animation bg-black text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-900 transition duration-300 ease-in-out"
+          >
+            <a href="/login">Sign-in</a>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section (Full Screen) -->
+    <main
+      id="home"
+      class="flex-grow flex flex-col h-screen gap-8 justify-center p-4"
+    >
+      <div class="text-center">
+        <h1 class="text-6xl font-extrabold text-gray-900 animated-text">
+          Take Adaptive Quizzes Instantly
+        </h1>
+        <div
+          class="text-center text-xl mt-4 animated-text text-gray-700 max-w-2xl mx-auto"
+        >
+          <p>
+            Generates dynamic questions from any content and learn smarter with
+            AI-based adaptation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-center gap-10 h-12 animated-text">
+        <button
+          class="btn-animation bg-black text-white font-semibold py-2 px-6 w-48 rounded-lg shadow-md hover:bg-gray-200 transition duration-300 ease-in-out"
+        >
+          <a href="/login">Start Quiz</a>
+        </button>
+        <button
+          class="btn-animation rounded-lg bg-transparent text-gray-800 font-semibold py-2 px-6 shadow-md hover:bg-gray-200 transition-colors duration-300 ease-in-out"
+          style="border: 3px solid white"
+        >
+          <a href="/admin_login">Generate Questions</a>
+        </button>
+      </div>
+    </main>
+
+    <!-- About Section -->
+    <section id="about" class="bg-indigo-50 text-center py-16 px-6">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">
+        About AI Smart Quizzer
+      </h2>
+      <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        AI Smart Quizzer is your AI-powered learning companion that makes exam
+        preparation smarter. It automatically generates adaptive quizzes based
+        on your notes, books, or uploaded content. Our mission is to save time
+        and boost learning efficiency for students and professionals.
+      </p>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="features" class="bg-white text-center py-16 px-6">
+      <h2 class="text-3xl font-bold text-gray-900 mb-10">How It Works</h2>
+      <div class="flex flex-wrap justify-center gap-8">
+        <div class="bg-gray-50 p-6 rounded-xl w-64 shadow-md">
+          <h3 class="text-xl font-semibold text-indigo-600 mb-2">Step 1</h3>
+          <p class="text-gray-600">Upload your notes or study material.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl w-64 shadow-md">
+          <h3 class="text-xl font-semibold text-indigo-600 mb-2">Step 2</h3>
+          <p class="text-gray-600">
+            AI instantly generates personalized quiz questions.
+          </p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl w-64 shadow-md">
+          <h3 class="text-xl font-semibold text-indigo-600 mb-2">Step 3</h3>
+          <p class="text-gray-600">
+            Take quizzes, check results, and track progress.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="bg-indigo-50 text-center py-16 px-6">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">
+        Why Choose AI Smart Quizzer?
+      </h2>
+      <ul class="text-lg text-gray-700 space-y-3">
+        <li>✅ Save time with AI-generated questions</li>
+        <li>✅ Adaptive difficulty based on your performance</li>
+        <li>✅ Access multiple quiz modes for better practice</li>
+        <li>✅ Track your progress with detailed analytics</li>
+      </ul>
+    </section>
+
+    <!-- ✨ NEW: Footer with Admin Login Link -->
+    <footer class="bg-transparent text-gray-600 mt-auto">
+        <div class="container mx-auto px-6 py-4 text-center">
+             &copy; 2025 AI Smart Quizzer. All Rights Reserved. | 
+            <a href="/admin_login" class="hover:text-gray-900 font-medium underline">Admin Login</a>
+        </div>
+    </footer>
+
+  </body>
+</html>
+
+
+
+
